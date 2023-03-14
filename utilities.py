@@ -22,8 +22,7 @@ def SieveOfEratosthenes(n):
         # If prime[p] is not changed, then it is
        # a prime
         if (prime[p] == True):
-            print(p)
-            # Update all multiples of p
+            # Update all multipless of p
             for i in range(p * p, n + 1, p):
                 prime[i] = False
         p += 1
@@ -56,7 +55,6 @@ def PrimeList(n):
     while i<n:
         if(isPrime(i)):
             primelist.append(i)
-            print(i)
         i += 2
     return primelist
 
