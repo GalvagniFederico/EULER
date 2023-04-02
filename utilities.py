@@ -17,10 +17,12 @@ def SieveOfEratosthenes(n):
     prime = [True for i in range(n+1)]
     prime_list = []
     p = 2
+    
+        
     while(p * p <= n):
-          
+        print(p)
         # If prime[p] is not changed, then it is
-       # a prime
+        # a prime
         if (prime[p] == True):
             # Update all multipless of p
             for i in range(p * p, n + 1, p):
@@ -35,7 +37,7 @@ def SieveOfEratosthenes(n):
             prime_list.append(p)
     return prime_list
 
-
+#SieveOfEratosthenes(123456789)
 
 def isPrime(n):
     if n <= 1:
@@ -58,5 +60,9 @@ def PrimeList(n):
         i += 2
     return primelist
 
-
-#PrimeList(1000000)
+def isPandigital(n):
+    s = sorted(str(n))
+    for i in range(0,len(s)):
+        if s[i] != str(i+1):
+            return False
+    return True
