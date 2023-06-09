@@ -21,7 +21,7 @@ def dPentagonal():
         for j in range(i+1, len(p_list)):
             if (str(p_list[i] + p_list[j])) in p_set and (str(p_list[j] - p_list[i])) in p_set:
                 print(str(p_list[i]) + " - " + str(p_list[j]))
-
+    
 
 dPentagonal()
 
