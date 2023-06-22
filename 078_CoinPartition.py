@@ -95,7 +95,7 @@ def partition2():
         partitions.append(lastpartition)
         n+=1
 
-    return n
+    return n-1
             
 
         
