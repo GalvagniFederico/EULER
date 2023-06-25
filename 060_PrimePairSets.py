@@ -1,6 +1,7 @@
 from utilities import PrimeList, isPrime
 from itertools import combinations
 import time
+import numpy as np
 
 # 060 - Prime Pair Sets
 
@@ -11,7 +12,7 @@ import time
 
 # I could store copies that failed to be pairsets so i don't need to process next sets containing them
 
-def isPrimePairSets(set):
+def IsPrimePairSets(set):
     l = len(set)
     if  l%2 == 0:
         l = int( l/2)
@@ -29,38 +30,62 @@ def isPrimePairSets(set):
                 return [set[j], set[i]]
     return True
 
-print(isPrimePairSets([3,7,67,71,73]))
+#print(isPrimePairSets([3,7,67,71,73]))
+
+def del_list_inplace(l, id_to_del):
+    for i in sorted(id_to_del, reverse=True):
+       del(l[i])
 
 def PrimePairSets():
     start_time = time.time()
-    p_l = PrimeList(100)
 
-    failedSets = [[2,5],[2,5]]
+    p_l = PrimeList(200)
+    
 
-    c = []
-    c.extend(combinations(p_l,5))
-    print("Found ", len(c), " pairs in  %s seconds ---" % (time.time() - start_time))
+    counter = [0,0,0]
 
-    for x in c:
-        if sum(x)%3 == 0:
+    c = np.array(list(combinations(p_l,5)))
+    
+    doneSet = [False for i in range(len(c))]
+
+    print("Found ", len(c), f" pairs in  {time.time() - start_time} seconds ---")
+
+    
+    for i in range(len(c)):
+        if c[i]:
             continue
-        found = False
-        for z in range(0, len(failedSets)):
-            if x.__contains__(failedSets[z][0]) or x.__contains__(failedSets[z][1]):
-                break
-        if
+        
+        process_time = time.time()
+        ppsRes = IsPrimePairSets(x)
+        print(f"Checked if is a Prime Pair Sets in {time.time() - process_time} seconds ---")
 
-        b = isPrimePairSets(x)
+        if ppsRes != True:
+            counter[0] += 1
 
-        if b != True:
-            failedSets.append(b)
+            process_time = time.time()
+            i_rem = [i for i in range(0, len(c)) if c[i].__contains__(ppsRes[0]) and c[i].__contains__(ppsRes[1])]
+            print(f"Found all occurrences of failed set in {time.time() - process_time} seconds ---")
+
+            process_time = time.time()
+            c = np.delete(c,i_rem,0)
+            
+            print("Removed ",len(i_rem),f"occurrence of failed set in {time.time() - process_time} ---")
+
             continue
 
-        if isPrimePairSets(x):
+        if ppsRes(x):
             print("===================== RESULT FOUND =====================")
             print(sum(x))
             return sum(x)
-    print("Process finished --- %s seconds ---" % (time.time() - start_time))
-
+    print(f"Process finished --- {time.time() - start_time} seconds ---")
+    print("Rem Access ", counter[0])
 
 print(PrimePairSets())
+
+def test():
+    arr = np.array([0,1,2,3,4,5,6,7,8,9])
+    
+    arr = np.delete(arr, [0,2,4])
+    print(arr)
+    
+test()
