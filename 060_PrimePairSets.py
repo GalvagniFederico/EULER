@@ -15,7 +15,7 @@ import numpy as np
 def IsPrimePairSets(set):
     l = len(set)
     if  l%2 == 0:
-        l = int( l/2)
+        l = int( l/2) +1
     else:
         l = int(( l+1)/2)
     
@@ -30,21 +30,25 @@ def IsPrimePairSets(set):
                 return [set[j], set[i]]
     return True
 
-#print(isPrimePairSets([3,7,67,71,73]))
+def IsPrimePairSets2(set):
+    for i in range(0, len(set)):
+        for j in range(i+1, len(set)):
+            if i == j:
+                continue
+            a = int(str(set[i]) + str(set[j]))
+            b = int(str(set[j]) + str(set[i]))
+            if not isPrime(a) or not isPrime(b):
+                return False
+    return True
 
-def del_list_inplace(l, id_to_del):
-    for i in sorted(id_to_del, reverse=True):
-       del(l[i])
+#print(IsPrimePairSets([3, 11, 2069, 2297, 8219]))
 
 def PrimePairSets():
     start_time = time.time()
 
-    p_l = PrimeList(200)
-    
+    p_l = PrimeList(1000)
 
-    counter = [0,0,0]
-
-    c = np.array(list(combinations(p_l,5)))
+    c = list(combinations(p_l,5))
     
     doneSet = [False for i in range(len(c))]
 
@@ -52,40 +56,66 @@ def PrimePairSets():
 
     
     for i in range(len(c)):
-        if c[i]:
+        if doneSet[i]:
             continue
-        
+
         process_time = time.time()
-        ppsRes = IsPrimePairSets(x)
-        print(f"Checked if is a Prime Pair Sets in {time.time() - process_time} seconds ---")
-
+        ppsRes = IsPrimePairSets(c[i])
+       
         if ppsRes != True:
-            counter[0] += 1
+            rem_count = 0
+            for j in range(i, len(c)):
+                if c[j].__contains__(ppsRes[0]) and c[j].__contains__(ppsRes[1]):
+                    doneSet[j] = True
+                    rem_count +=1
+                else:
+                    break
 
-            process_time = time.time()
-            i_rem = [i for i in range(0, len(c)) if c[i].__contains__(ppsRes[0]) and c[i].__contains__(ppsRes[1])]
-            print(f"Found all occurrences of failed set in {time.time() - process_time} seconds ---")
+            print(f"Checked if set ", i, f"is a Prime Pair Sets in {time.time() - process_time} seconds ---")
+            print(f"Remove {rem_count} sets")
+            #process_time = time.time()
+            #i_rem = [i for i in range(0, len(c)) if c[i].__contains__(ppsRes[0]) and c[i].__contains__(ppsRes[1])]
+            #print(f"Found all occurrences of failed set in {time.time() - process_time} seconds ---")
 
-            process_time = time.time()
-            c = np.delete(c,i_rem,0)
+            # process_time = time.time()
+            # c = np.delete(c,i_rem,0)
             
-            print("Removed ",len(i_rem),f"occurrence of failed set in {time.time() - process_time} ---")
+            # print("Removed ",len(i_rem),f"occurrence of failed set in {time.time() - process_time} ---")
 
             continue
 
-        if ppsRes(x):
+        if ppsRes:
             print("===================== RESULT FOUND =====================")
-            print(sum(x))
-            return sum(x)
+            print(sum(c[i]))
+            print(c[i])
+            return sum(c[i])
     print(f"Process finished --- {time.time() - start_time} seconds ---")
-    print("Rem Access ", counter[0])
-
-print(PrimePairSets())
-
-def test():
-    arr = np.array([0,1,2,3,4,5,6,7,8,9])
     
-    arr = np.delete(arr, [0,2,4])
-    print(arr)
+#print(PrimePairSets())
+
+# def IsPrimeCouple(a,b):
+#     return isPrime(int(str(a) + str(b))) and isPrime(int(str(b) + str(a)))
+
+def PrimePairSets_PartialCombinations():
+    pl = PrimeList(10000)
+
+    for a in range(len(pl)):
+
+        for b in range(a+1,len(pl)):
+            if IsPrimePairSets2([pl[a],pl[b]]):
+
+                for c in range(b+1, len(pl)):
+                    if IsPrimePairSets2([pl[a],pl[b],pl[c]]):
+
+                        for d in range(c+1, len(pl)):
+                            if IsPrimePairSets2([pl[a],pl[b],pl[c],pl[d]]):
+
+                                for e in range(d+1, len(pl)):
+                                    if IsPrimePairSets2([pl[a],pl[b],pl[c],pl[d],pl[e]]):
+                                        print([pl[a],pl[b],pl[c],pl[d], pl[e]])
+                                        print(sum([pl[a],pl[b],pl[c],pl[d], pl[e]]))
+                                        return
+
     
-test()
+
+PrimePairSets_PartialCombinations()
