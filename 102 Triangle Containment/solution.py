@@ -27,10 +27,10 @@ y = 1
 
 def ConvertPoint(p):
 
-    return [round((p[0] +1000)*0.2), 400 - (round((p[1] +1000)*0.2))]
+    return [round((p[0] +1000)*0.4), 800 - (round((p[1] +1000)*0.4))]
 
 def ConvertLinear(p):
-    return round(p*0.2)
+    return round(p*0.1)
 
 def DrawPoint(img, point, color):
     point = ConvertPoint(point)
@@ -39,7 +39,7 @@ def DrawPoint(img, point, color):
 def DrawSegment(img, a, b, color):
     a = ConvertPoint(a)
     b = ConvertPoint(b)
-    cv2.line(img, (a[x], a[y]), (b[x], b[y]), color, 1)
+    cv2.line(img, (a[x], a[y]), (b[x], b[y]), color, 2)
 
 
 def DrawTriangle(triangle, img):
@@ -58,7 +58,7 @@ def DistanceBetweenTwoPoints(p1,p2):
     return math.sqrt(math.pow(p2[x] - p1[x],2) + math.pow(p2[y] - p1[y],2))
 
 
-def SlopeFromPoints(segment):
+def SlopeFromSegment(segment):
     a,b=0,1
     m = ((segment[a][y]-segment[b][y])/(segment[a][x]-segment[b][x]))
     return m
@@ -88,36 +88,78 @@ def TriangleCOG(triangle, centerAB, centerBC):
 
     segment1 = [centerAB, triangle[c]]
     segment2 = [centerBC, triangle[a]]
-    m1 = SlopeFromPoints(segment1)
-    m2 = SlopeFromPoints(segment2)
+    m1 = SlopeFromSegment(segment1)
+    m2 = SlopeFromSegment(segment2)
     q1 = FindQ(triangle[c],m1)
     q2 = FindQ(centerBC,m2)
     intersection = SegmentIntersection(m1,q1,m2,q2)
 
     return intersection
     
+def isPointBetweenAngle(segment1, segment2, vertex, p, triangleCenter):
+    a,b,c = 0,1,2
+    m1 = SlopeFromSegment(segment1)
+    m2 = SlopeFromSegment(segment2)
+    mp = SlopeFromSegment([[vertex[x], vertex[y]], [p[x], p[y]]])
+
+    m1 = math.degrees(math.atan(SlopeFromSegment(segment1)))
+    m2 = math.degrees(math.atan(SlopeFromSegment(segment2)))
+    mp = math.degrees(math.atan(SlopeFromSegment([ [p[x], p[y]],[vertex[x], vertex[y]]])))
+
+
+    
+    if m1 < m2:
+        return m1 < mp and mp < m2
+    else:
+        return m1 > mp and mp > m2
+    
+    
+    
 
 def Solution():    
-    img = np.zeros((500,400,3), dtype = "uint8")
+    img = np.zeros((800,800,3), dtype = "uint8")
     imgClone = img.copy()
-
-    a = 0
-    b = 1
-    c = 2
 
     triangles = np.array([[int(points) for points in line.replace("\n","").split(",")] for line in open("102 Triangle Containment/triangles.txt")])
     triangles = triangles.reshape(len(triangles),3,2)
 
     origin = [0,0]
 
+    res = 0
+
     for triangle in triangles:
-        centerAB = CenterOfSegment([[triangle[a][x],triangle[a][y]],[triangle[b][x],triangle[b][y]]])
-        centerBC = CenterOfSegment([[triangle[b][x],triangle[b][y]],[triangle[c][x],triangle[c][y]]])
-        centerCA = CenterOfSegment([[triangle[c][x],triangle[c][y]],[triangle[a][x],triangle[a][y]]])
+        A = [triangle[0][x],triangle[0][y]]
+        B = [triangle[1][x],triangle[1][y]]
+        C = [triangle[2][x],triangle[2][y]]
+
+        AB = [A,B]
+        BC = [B,C]
+        CA = [C,A]
+
+        
+        centerAB = CenterOfSegment(AB)
+        centerBC = CenterOfSegment(BC)
+        centerCA = CenterOfSegment(CA)
 
         CenterOfGravity = TriangleCOG(triangle, centerAB, centerBC)
 
-        DistanceCogOrigin = DistanceBetweenTwoPoints(CenterOfGravity, origin)
+        #DistanceCogOrigin = DistanceBetweenTwoPoints(CenterOfGravity, origin)
+        # print(isPointBetweenAngle(AB, CA, A, origin))
+        # print(isPointBetweenAngle(AB, BC, B, origin))
+        # if isPointBetweenAngle(AB, CA, A, origin) and isPointBetweenAngle(BC, AB, B, origin):
+        #     res+=1
+        #     DrawPoint(img, [100,100], (200,200,200))
+        mAB = SlopeFromSegment(AB)
+        mBC = SlopeFromSegment(BC)
+        mCA = SlopeFromSegment(CA)
+
+        qAB = FindQ(A,mAB)
+        qBC 
+        qCA = 
+
+        mp = SlopeFromSegment([CenterOfGravity,origin])
+
+
 
         ### DRAWING ###
         img = imgClone.copy()
@@ -126,12 +168,12 @@ def Solution():
         DrawTriangle(triangle, img)
 
         # Draw Median Line 
-        DrawSegment(img, centerAB, triangle[c], (252, 245, 95))
-        DrawSegment(img, centerBC, triangle[a], (252, 245, 95))
-        DrawSegment(img, centerCA, triangle[b], (252, 245, 95))
+        DrawSegment(img, centerAB, C, (252, 245, 95))
+        DrawSegment(img, centerBC, A, (252, 245, 95))
+        DrawSegment(img, centerCA, B, (252, 245, 95))
 
         # Origin Radius
-        cv2.circle(img, ConvertPoint(CenterOfGravity),ConvertLinear(DistanceCogOrigin),(123,43,53))
+        #cv2.circle(img, ConvertPoint(CenterOfGravity),ConvertLinear(DistanceCogOrigin),(123,43,53))
 
         # Segment Middle Point
         DrawPoint(img, centerAB, (200,200,200))
@@ -140,6 +182,11 @@ def Solution():
 
         # Line from COG to origin
         DrawSegment(img, CenterOfGravity, origin, (0,255,0))
+
+        #
+        cv2.putText(img,"A",ConvertPoint(A),cv2.FONT_HERSHEY_DUPLEX,0.4,(200,200,200))
+        cv2.putText(img,"B",ConvertPoint(B),cv2.FONT_HERSHEY_DUPLEX,0.4,(200,200,200))
+        cv2.putText(img,"C",ConvertPoint(C),cv2.FONT_HERSHEY_DUPLEX,0.4,(200,200,200))
 
         # Center of Gravity
         DrawPoint(img, CenterOfGravity, (0,0,255))
