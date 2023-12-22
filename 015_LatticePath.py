@@ -77,9 +77,7 @@ def LatticePath(n):
             
 #print(LatticePath(20))
 
-def LatticePath2(n,k):
-    return math.factorial(n) / (math.factorial(k) * math.factorial(n-k))
+def LatticePath2(w,h):
+    return math.factorial(w+h) / (math.factorial(w) * math.factorial(h))
     
-
-
-print(LatticePath2(40, 20))
+print(LatticePath2(80,80))

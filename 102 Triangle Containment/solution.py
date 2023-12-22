@@ -154,8 +154,7 @@ def Solution():
         mCA = SlopeFromSegment(CA)
 
         qAB = FindQ(A,mAB)
-        qBC 
-        qCA = 
+
 
         mp = SlopeFromSegment([CenterOfGravity,origin])
 
@@ -183,7 +182,7 @@ def Solution():
         # Line from COG to origin
         DrawSegment(img, CenterOfGravity, origin, (0,255,0))
 
-        #
+        # 
         cv2.putText(img,"A",ConvertPoint(A),cv2.FONT_HERSHEY_DUPLEX,0.4,(200,200,200))
         cv2.putText(img,"B",ConvertPoint(B),cv2.FONT_HERSHEY_DUPLEX,0.4,(200,200,200))
         cv2.putText(img,"C",ConvertPoint(C),cv2.FONT_HERSHEY_DUPLEX,0.4,(200,200,200))
