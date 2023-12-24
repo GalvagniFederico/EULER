@@ -12,10 +12,9 @@ def Solve():
     sizeY = len(matrix[0])
 
     visited = [[False for i in j] for j in matrix]
-    queue = []
-
-    for i in range(len(matrix)):
-        queue.append(Node(i,0,matrix[i][0]))
+    
+    #Add starting node [0][0] to the queue
+    queue = [Node(0,0, matrix[0][0])]
 
     while (len(queue) > 0):
          
@@ -37,7 +36,7 @@ def Solve():
         # Set as visited
         visited[nextNode.x][nextNode.y] =True
          
-        if nextNode.y == sizeY -1:
+        if nextNode.y == sizeY -1 and nextNode.x == sizeX-1:
             return nextNode.weight
 
         # Put next nodes in queue 
@@ -54,10 +53,8 @@ def Solve():
             queue.append(Node(nextNode.x - 1, nextNode.y, nextNode.weight + matrix[nextNode.x - 1][nextNode.y]))
 
         # # Left move
-        # if (nextNode.y > 0):
-        #     path = [i for i in nextNode.path]
-        #     path.append([nextNode.x, nextNode.y - 1])
-        #     queue.append(Node(nextNode.x, nextNode.y - 1, nextNode.weight + matrix[nextNode.x][nextNode.y -1], path))
+        if (nextNode.y > 0):
+            queue.append(Node(nextNode.x, nextNode.y - 1, nextNode.weight + matrix[nextNode.x][nextNode.y -1]))
     return -1
 
 print(Solve())
