@@ -19,7 +19,7 @@ def SummationOfPrimes(n):
     print("Process finished --- %s seconds ---" % (time.time() - start_time))
     return sum
 
-#print(SummationOfPrimes(1000000))
+print(SummationOfPrimes(10))
 
 def QuadraticPrimes(num):
     max_pair = (0,0,0)

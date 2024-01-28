@@ -21,7 +21,57 @@
 
 import numpy as np
 from itertools import combinations, permutations
+from itertools import product
+from decimal import Decimal
+import time
+import sys
 
+def percent_complete(step, total_steps, start_time, bar_width=60, title="",  print_perc=True, print_time=True):
+    # global last_print
+    # me = last_print
+    # if time.time() - me > 0.1 and step != total_steps:
+    #     last_print = time.time()
+    # else:
+    #     return
+
+    # UTF-8 left blocks: 1, 1/8, 1/4, 3/8, 1/2, 5/8, 3/4, 7/8
+    utf_8s = ["█", "▏", "▎", "▍", "▌", "▋", "▊", "█"]
+    perc = 100 * float(step) / float(total_steps)
+    max_ticks = bar_width * 8
+    num_ticks = int(round(perc / 100 * max_ticks))
+    full_ticks = num_ticks / 8      # Number of full blocks
+    part_ticks = num_ticks % 8      # Size of partial block (array index)
+    
+    disp = bar = ""                 # Blank out variables
+    bar += utf_8s[0] * int(full_ticks)  # Add full blocks into Progress Bar
+    
+    # If part_ticks is zero, then no partial block, else append part char
+    if part_ticks > 0:
+        bar += utf_8s[part_ticks]
+    
+    # Pad Progress Bar with fill character
+    bar += "▒" * int((max_ticks/8 - float(num_ticks)/8.0))
+    
+    if len(title) > 0:
+        disp = title + ": "         # Optional title to progress display
+    
+    # Print progress bar in green: https://stackoverflow.com/a/21786287/6929343
+    disp += "\x1b[0;32m"            # Color Green
+    disp += bar                     # Progress bar to progress display
+    disp += "\x1b[0m"               # Color Reset
+    if print_perc:
+        # If requested, append percentage complete to progress display
+        if perc > 100.0:
+            perc = 100.0            # Fix "100.04 %" rounding error
+        disp += " {:6.2f}".format(perc) + " %"
+
+    if print_time:
+        disp += "  eta: " + '{0:02.0f}:{1:02.0f}'.format(*divmod((time.time()-start_time) * 60, 60))
+      
+
+    # Output to terminal repetitively over the same line using '\r'.
+    sys.stdout.write("\r" + disp)
+    sys.stdout.flush()
 
 # Triangle   - P3n = n(n + 1)/2
 def TriangleNumberGen(s,f):
@@ -30,13 +80,13 @@ def TriangleNumberGen(s,f):
     while True:
         nxt = int((i*(i+1))/2)
         if nxt >= s and nxt <= f:
-            res.append(nxt)
+            res.append((3, nxt))
             
         if nxt > f:
             return res
         i+=1
 
-#print("Triangle ",TriangleNumberGen(10,20))
+#print("Triangle ",TriangleNumberGen(1,100))
 
 # Square     - P4n = n^2
 def SquareNumberGen(s,f):
@@ -45,12 +95,12 @@ def SquareNumberGen(s,f):
     while True:
         nxt = int(i*i)
         if nxt >= s and nxt <= f:
-            res.append(nxt)
+            res.append((4,nxt))
             
         if nxt > f:
             return res
         i+=1
-#print("Square ",SquareNumberGen(1,10))
+#print("Square ",SquareNumberGen(1,100))
 
 # Pentagonal - P5n = n(3n -1)/2
 def PentagonalNumberGen(s,f):
@@ -59,26 +109,26 @@ def PentagonalNumberGen(s,f):
     while True:
         nxt = int((i*((3*i)-1))/2)
         if nxt >= s and nxt <= f:
-            res.append(nxt)
+            res.append((5,nxt))
             
         if nxt > f:
             return res
         i+=1
-#print("Pentagonal ", PentagonalNumberGen(1,20))
+#print("Pentagonal ", PentagonalNumberGen(1,100))
 
 # Hexagonal  - P6n = n(2n -1)
 def HexagonalNumberGen(s,f):
     res = []
     i = 0
     while True:
-        nxt = int((i*((2*i)-1))/2)
+        nxt = int((i*((2*i)-1)))
         if nxt >= s and nxt <= f:
-            res.append(nxt)
+            res.append((6, nxt))
             
         if nxt > f:
             return res
         i+=1
-#print("Hexagonal ",HexagonalNumberGen(1,20))
+#print("Hexagonal ",HexagonalNumberGen(1,100))
 
 # Heptagonal - P7n = n(5n - 3)/2
 def HeptagonalNumberGen(s,f):
@@ -87,12 +137,12 @@ def HeptagonalNumberGen(s,f):
     while True:
         nxt = int((i*((5*i)-3))/2)
         if nxt >= s and nxt <= f:
-            res.append(nxt)
+            res.append((7,nxt))
             
         if nxt > f:
             return res
         i+=1
-#print("Heptagonal ", HeptagonalNumberGen(1,20))
+#print("Heptagonal ", HeptagonalNumberGen(1,100))
 
 # Octagonal  - P8n = n(3n-2)
 def OctagonalNumberGen(s,f):
@@ -101,90 +151,73 @@ def OctagonalNumberGen(s,f):
     while True:
         nxt = int(i*((3*i)-2))
         if nxt >= s and nxt <= f:
-            res.append(nxt)
+            res.append((8,nxt))
             
         if nxt > f:
             return res
         i+=1
-#print("Octagonal ", OctagonalNumberGen(1,20))
+#print("Octagonal ", OctagonalNumberGen(1,100))
 
 def IsCyclic(arr):
 
     perm = list(permutations(arr, len(arr)))
-
+    
 
     for j in range(len(perm)):
         res = True
+        a = str(perm[j][0])[:2]
+        b = str(perm[j][len(arr)-1])[2:]
         if str(perm[j][0])[:2] != str(perm[j][len(arr)-1])[2:]:
             res = False
+            continue
         else:
              for i in range(len(arr)-1):
                 a = str(perm[j][i])[2:] 
                 b = str(perm[j][i+1])[:2]
                 if a != b:
                     res = False
-        
-        if res:
+                    break
+        if res: 
             return True
         
     return False
 
-def isConsecutive(arr):
-    perm = list(permutations(arr, len(arr)))
+
+print(IsCyclic([8128, 8281,2882]))
 
 
-    for j in range(len(perm)):
-        res = True
-       
-        for i in range(len(arr)-1):
-            a = str(perm[j][i])[2:] 
-            b = str(perm[j][i+1])[:2]
-            if a != b:
-                res = False
-        
-        if res:
-            return True
-        
-    return False
-#print(IsConsecutive4Digit([8128,2882, 8281]))
+
+def next(types, data, ds):
+    if len(types) == 6 and data[0] // 100 == data[-1] % 100:
+        print(data, sum(data))
+    else:
+        for t, n in ds.get((types[-1], data[-1]), []):
+            if t not in types:
+                next(types+[t], data+[n], ds)
+
 
 # First I try to reproduce the set of three cyclic 4-digit number
 def ThreeCyclic():
-    # gener
-    P3 = TriangleNumberGen(1000,9999)
-    P4 = SquareNumberGen(1000,9999)
-    P5 = PentagonalNumberGen(1000,9999)
-    P6 = HexagonalNumberGen(1000,9999)
-    P7 = HeptagonalNumberGen(1000,9999)
-    P8 = OctagonalNumberGen(1000,9999)
-    
+    start_time = time.time()
+    # Generation
+    generated = []
+    generated.extend(TriangleNumberGen(999,9999))
+    generated.extend(SquareNumberGen(999, 9999))
+    generated.extend(PentagonalNumberGen(999, 9999))
+    generated.extend(HexagonalNumberGen(1000, 9999))
+    generated.extend(HeptagonalNumberGen(1000, 9999))
+    generated.extend(OctagonalNumberGen(1000, 9999))
 
-    for iP3 in range(0, len(P3)):
+    cyclicalSet = {}
+    for t1, n1 in generated:
+        for t2, n2 in generated:
+            if t1 != t2 and n1 % 100 == n2 // 100:
+                cyclicalSet[t1, n1] = cyclicalSet.get((t1, n1),[]) + [(t2, n2)] 
 
-        for iP4 in range(0, len(P4)):
-            if not isConsecutive([P3[iP3], P4[iP4]]):
-                continue
+    for type, data in cyclicalSet: next([type], [data], cyclicalSet)
 
-            for iP5 in range(0, len(P5)):
-                if not isConsecutive([P3[iP3], P4[iP4], P5[iP5]]):
-                    continue
-
-                for iP6 in range(0, len(P6)):
-                    if not isConsecutive([P3[iP3], P4[iP4], P5[iP5], P6[iP6]]):
-                        continue
-                    
-                    for iP7 in range(0, len(P7)):
-                        if not isConsecutive([P3[iP3], P4[iP4], P5[iP5], P6[iP6], P7[iP7]]):
-                            continue
-                    
-                        for iP8 in range(0, len(P8)):
-                            
-                            if IsCyclic([P3[iP3], P4[iP4], P5[iP5], P6[iP6], P7[iP7], P8[iP8]]):
-                                print([P3[iP3], P4[iP4], P5[iP5], P6[iP6], P7[iP7], P8[iP8]])
-                                print(sum([P3[iP3], P4[iP4], P5[iP5], P6[iP6], P7[iP7], P8[iP8]]))
-                            
-                    
-                
-                    
-
+    # for _set in cyclicalSet:
+    #     if len(_set) == 6 and _set[0] // 100 == _set[-1] % 100:
+    #         print(_set, sum(_set))   
+                                    
 ThreeCyclic()

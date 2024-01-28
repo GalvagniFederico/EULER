@@ -60,6 +60,17 @@ def PrimeList(n):
         i += 2
     return primelist
 
+def NextPrime(n):
+    if n == 0:
+        n=1
+    if n % 2 == 0:
+        n+=1
+
+    while True:
+        n+=2
+        if isPrime(n):
+            return n
+
 def isPandigital(n):
     s = sorted(str(n))
     for i in range(0,len(s)):
