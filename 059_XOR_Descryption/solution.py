@@ -80,7 +80,7 @@ def Solve():
     for line in open("059_XOR_Descryption\encrypted.txt"):
         t += line
 
-    customKey = "aaa"
+    customKey = "prova"
 
     
     text = "Possiamo provare con qualcosa a caso inventato al momento cryptato con una chiave a nostra scelta e la soluzione avverrebbe comuqnue con successo"

@@ -6,6 +6,7 @@ def CanBeRappresented(number, cube1, cube2):
     if (number[0] in cube1 and number[1] in cube2) or (number[1] in cube1 and number[0] in cube2):
         return True
     
+
     # 6/9 case    
     if number[0] == 6 or number[0] == 9:
         if ((6 in cube1 or 9 in cube1) and number[1] in cube2) or \
