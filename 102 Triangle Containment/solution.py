@@ -24,7 +24,6 @@ y = 1
 
 
 
-
 def ConvertPoint(p):
 
     return [round((p[0] +1000)*0.4), 800 - (round((p[1] +1000)*0.4))]
@@ -143,6 +142,10 @@ def Solution():
 
         CenterOfGravity = TriangleCOG(triangle, centerAB, centerBC)
 
+
+        # Distance between COG and Origin
+
+        
         #DistanceCogOrigin = DistanceBetweenTwoPoints(CenterOfGravity, origin)
         # print(isPointBetweenAngle(AB, CA, A, origin))
         # print(isPointBetweenAngle(AB, BC, B, origin))

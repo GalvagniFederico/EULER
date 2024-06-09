@@ -1,117 +1,85 @@
-from itertools import permutations, combinations
-import operator
+# 
+# Solution to Project Euler problem 93
+# Copyright (c) Project Nayuki. All rights reserved.
+# 
+# https://www.nayuki.io/page/project-euler-solutions
+# https://github.com/nayuki/Project-Euler-solutions
+# 
 
-def DoOperations(numbers, operations, parenthesis):
-    for p in parenthesis:
-        operations[p[0]]()
+import eulerlib, fractions, itertools
+
+A = 10 & 2
+b = 1 & 2
+
+def compute():
+	ans = max(((a, b, c, d)
+		for a in range(1, 10)
+		for b in range(a + 1, 10)
+		for c in range(b + 1, 10)
+		for d in range(c + 1, 10)),
+		key=longest_consecutive)
+	return "".join(str(x) for x in ans)
 
 
-def solution():
-    numbers = [0,1,2,3,4,5,6,7,8,9]
-    numbers = list(combinations(numbers,4))
-    
+def longest_consecutive(abcd):
+	a, b, c, d = abcd
+	expressible = set()
+	
+	# Try all possible orderings of operands and operators
+	ops = [0, 0, 0, a, b, c, d]  # 0 = operator slot, 1 to 9 = literal operand
+	while True:
+		
+		# Try all possibilities for the 3 operators
+		for i in range(64):
+			stack = []
+			j = 0  # Operator index
+			
+			stackunderflow = False
+			divbyzero = False
+			for op in ops:
+				if 1 <= op <= 9:  # Operand
+					stack.append(fractions.Fraction(op))
+				elif op == 0:  # Operator
+					if len(stack) < 2:
+						stackunderflow = True
+						break
+					right = stack.pop()
+					left = stack.pop()
+					oper = (i >> (j * 2)) & 3
+					if oper == 0:
+						stack.append(left + right)
+					elif oper == 1:
+						stack.append(left - right)
+					elif oper == 2:
+						stack.append(left * right)
+					elif oper == 3:
+						if right.numerator == 0:
+							divbyzero = True
+							break
+						stack.append(left / right)
+					else:
+						raise AssertionError()
+					j += 1  # Consume an operator
+				else:
+					raise AssertionError()
+			
+			if stackunderflow:
+				break
+			if divbyzero:
+				continue
+			if len(stack) != 1:
+				raise AssertionError()
+			
+			result = stack.pop()
+			if result.denominator == 1:
+				expressible.add(result.numerator)
+		
+		if not eulerlib.next_permutation(ops):
+			break
+	
+	# Find largest set of consecutive expressible integers starting from 1
+	return next(i for i in itertools.count(1) if (i not in expressible)) - 1
 
-    operations = [operator.add, operator.sub, operator.mul, operator.truediv]
-    operations = list(permutations(operations, 3))
-    # 0p
-# 1234
 
-# 2p
-# (12)34
-# 1(23)4
-# 12(34)
-# (12)(34)
-
-# 3 p
-# (123)4
-# 1(234)
-
-# comb
-# ((12)3)4
-# (1(23))4
-# 1((23)4)
-# 1(2(34))
-
-    parenthesis = [[0,0,1], [1,1,2], [2,2,3], [1,[0,0,1], [2,2,3]]]
-    parenthesis3 = [[0,2], [1,3]]
-    
-    print(operations[0][0](2,15))    
-
-    sequence = set()
-    sequence.add("10")
-    numbers = [1,2,3,4]
-    for n in numbers:
-         for s in operations:
-            for p in parenthesis:
-                DoOperations(n, s, p)
-
-            try: sequence.add(s[2](s[1](s[0](n[0], n[1]), n[2]), n[3])) 
-            except: True
-            try: sequence.add(s[2](s[1](s[0](n[0], n[1]),n[2]),n[3]))
-            except: True
-
-            try: sequence.add(s[2](s[0](n[0], s[1](n[1],n[2])), n[3]))# 1(23)4
-            except: True
-            
-            try:  sequence.add(s[1](s[0](n[0], n[1]), s[2](n[2], n[3]))) # 12s[2](n[2], n[3])
-            except: True
-           
-            try:  sequence.add(s[1](s[0](n[0], n[1]), s[2](n[2], n[3])))
-            except: True
-           
-
-            # 3 p
-            try: sequence.add(s[2](s[1](s[0](n[0], n[1]), n[2]),n[3]))# (123)4
-            except: True
-            
-            try:  sequence.add(s[0](n[0], s[2](n[3],s[1](n[1], n[2]))))# 1(234)
-            except: True
-           
-            
-
-            sequence
-
-            # comb
-
-            
-            try: sequence.add(s[2](s[1](s[0](n[0], n[1]), n[2]), n[3])) # ((12)3)4
-            except: True
-            
-            try: sequence.add(s[2](s[0](n[0], s[1](n[1],n[2])), n[3]))# (1(23))4
-            except: True
-            
-            try: sequence.add(s[0](n[0], s[2](s[1](n[1], n[2]),n[3])))# 1((23)4)
-            except: True
-           
-            try:  sequence.add(s[0](n[0] , s[1](n[1], s[2](n[2], n[3])) ))# 1(2(34))
-            except: True
-            
-    res = []
-    for n in sequence:
-        if isinstance(n, int):
-            res.append(n)
-    
-    res = sorted(res)
-    return res
-
-print(solution()) 
-
-# 0p
-# 1234
-
-# 2p
-# (12)34
-# 1(23)4
-# 12(34)
-# (12)(34)
-
-# 3 p
-# (123)4
-# 1(234)
-
-# comb
-# ((12)3)4
-# (1(23))4
-# 1((23)4)
-# 1(2(34))
-
+if __name__ == "__main__":
+	print(compute())
