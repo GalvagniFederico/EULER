@@ -80,7 +80,7 @@ def Solve():
     for line in open("059_XOR_Descryption\encrypted.txt"):
         t += line
 
-    customKey = "pppppppp"
+    customKey = "abcde"
 
     
     text = "Possiamo provare con qualcosa a caso inventato al momento cryptato con una chiave a nostra scelta e la soluzione avverrebbe comuqnue con successo"
@@ -101,11 +101,22 @@ def Solve():
 
     start_time = time.time()
 
+    badValue = [[] for i in range(len(customKey))]
+
     for key in keyCodes:
         isCandidate = True
         candidateText = ""
         candidateScore = 0
         candidateRowAscii = []
+
+        skip = False
+
+        for i in range(len(key)):
+            if badValue[i].__contains__(key[i]):
+                skip = True
+
+        if skip:
+            continue
 
         if l - prev_l >= l_span:
             percent_complete(l, len(keyCodes),start_time)
@@ -113,10 +124,12 @@ def Solve():
 
         l+= 1
         
-        for i in range(len(rawAscii)):
-            encryptionKey = key[(int(i%(len(key))))]
 
+        for i in range(len(rawAscii)):
+            definetlyWrong=False
+            encryptionKey = key[(int(i%(len(key))))]
             decryptedAscii = rawAscii[i] ^ encryptionKey
+
 
             candidateText += chr(decryptedAscii)
             candidateRowAscii.append(decryptedAscii)
@@ -128,7 +141,9 @@ def Solve():
             
             if (decryptedAscii >= 97 and decryptedAscii <= 122) or (decryptedAscii >= 65 and decryptedAscii <= 90) or decryptedAscii == 32 :
                 candidateScore += 100
-            elif decryptedAscii > 128:
+            elif decryptedAscii > 125 or decryptedAscii < 30:
+                badValue[int(i%len(key))].append(encryptionKey)
+                definetlyWrong = True
                 candidateScore -= 1000
             else:
                 candidateScore-= 500
@@ -141,6 +156,9 @@ def Solve():
             bestCandidateText = candidateText
             bestCandidateScore = candidateScore
             bestCandidateRowAscii = sum(candidateRowAscii)
+        
+        if definetlyWrong:
+            continue
     percent_complete(1, 1, start_time)
     return bestCandidateRowAscii, bestCandidateKeyCode, bestCandidateText, "".join([chr(i) for i in Encrypt([ord(i) for i in bestCandidateText], [ord(i) for i in bestCandidateKeyCode])]), bestCandidateScore
 

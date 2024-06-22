@@ -13,17 +13,19 @@ from collections import Counter
 
 # Map ranks to value
 values = {r: i for i, r in enumerate("23456789TJQKA", 2)}
-
 ranks = [(1,1,1,1,1),(2,1,1,1),(2,2,1),(3,1,1),(),(),(3,2),(4,1)]
-
-# Generation of all possible straigt combination
 straights = [(v,v-1,v-2,v-3,v-4) for v in range(14,5,-1)] + [(14,5,4,3,2)]
 
 
 
 def HandScore(hand):
+    # Count cards of the same rank and get ranks
+    a = list(Counter(x[0] for x in hand).items())
     score = list(zip(*sorted(((v, values[k]) for k, v in Counter(x[0] for x in hand).items()), reverse=True)))
     
+    a = [1,2,3]
+    b = ["a", "b", "c"]
+    b = list(zip(a,b))
     score[0] = ranks.index(score[0])
 
     if len(set(card[1] for card in hand)) == 1:
@@ -32,7 +34,6 @@ def HandScore(hand):
     if tuple(score[1]) in straights:
         score[0] = 8 if score[0] == 5 else 4
 
-    # Check for flush
     return score
 
 def Solve():
