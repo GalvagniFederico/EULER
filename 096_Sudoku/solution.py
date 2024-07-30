@@ -187,12 +187,12 @@ def click(x,y):
 
 def Solve():
     
-    #grid = GetGrid()
-    #display(parse_grid(grid))
-    grid = '000'
+    grid = GetGrid()
+    display(parse_grid(grid))
+    grid = '001005800280003070004200000010000000000050'
     grid = solve_grid(grid)
     display(grid)
-    click(1080,266)
+    click(1070,250)
     for i in range(0,9):
         for j in range(0,9):
             keyboard.press(grid[squares[(i*9)+j]])
@@ -208,4 +208,4 @@ def Solve():
 
 
 Solve()
-#Solve()
+
