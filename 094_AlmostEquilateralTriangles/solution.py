@@ -5,7 +5,6 @@
 
 #Find the sum of the perimeters of all almost equilateral triangles with integral side lengths and area
 #  and whose perimeters do not exceed one billion. 
-
 import math
 
 

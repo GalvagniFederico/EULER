@@ -186,7 +186,6 @@ def click(x,y):
     win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP,x,y,0,0)
 
 def Solve2():
-    
     grid = GetGrid()
     display(parse_grid(grid))
     grid = '001005800280003070004200000010000000000050'
@@ -205,7 +204,3 @@ def Solve2():
                 for i in range(9): 
                     keyboard.press(Key.left)
                     time.sleep(0.01)
-
-
-
-
