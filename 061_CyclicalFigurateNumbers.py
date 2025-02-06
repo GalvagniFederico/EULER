@@ -183,9 +183,6 @@ def IsCyclic(arr):
     return False
 
 
-print(IsCyclic([8128, 8281,2882]))
-
-
 
 def next(types, data, ds):
     if len(types) == 6 and data[0] // 100 == data[-1] % 100:
