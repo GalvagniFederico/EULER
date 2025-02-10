@@ -1,9 +1,7 @@
 import time
 import math
 import array
-
-def count_zeros(number):
-    return math.floor(math.log10(number))
+from collections import Counter
 
 def Solve(n):
     start_time = time.time()
@@ -32,4 +30,4 @@ def Solve(n):
     return nMinPermTotient, minPermTotient
 
 
-print(Solve(10_000_000))
+print(Solve(1_000_000))
