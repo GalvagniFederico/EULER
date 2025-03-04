@@ -1,9 +1,6 @@
 import math
 import time
 
-
-    
-
 def Solve(L):
     start_time = time.time()
     count = 0 
