@@ -20,7 +20,6 @@ def SieveOfEratosthenes(n):
     
         
     while(p * p <= n):
-        print(p)
         # If prime[p] is not changed, then it is
         # a prime
         if (prime[p] == True):
