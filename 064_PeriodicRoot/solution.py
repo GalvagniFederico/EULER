@@ -1,21 +1,32 @@
-# First I calculate square root of n
-# Take the integer part of √n and assign it to a0
-# Then I subtract a0 from √n and take the reciprocal
-# Repeat until i found the period
 import math
 
-def FindOddPeriod(n):
-    a = []
-    i = 0
+def radice_continua(n):
+    if int(math.sqrt(n)) ** 2 == n:
+        return [int(math.sqrt(n))]  # Se n è un quadrato perfetto, restituisci solo la parte intera
+
+    m = 0
+    d = 1
+    a0 = int(math.sqrt(n))
+    a = a0
+
+    period = []
+
+    seen = set()  # per sicurezza, ma non obbligatorio
+
     while True:
-        a = math.sqrt(n) 
+        m = d * a - m
+        d = (n - m * m) // d
+        a = (a0 + m) // d
+        period.append(a)
 
-def Solve():
+        # la sequenza inizia a ripetersi quando a == 2*a0
+        if a == 2 * a0:
+            break
 
+    return [a0, period]  # restituisce: [parte intera, [sequenza periodica]]
 
-
-
-
-
-
-
+# Esempio: √23
+n = 23
+espansione = radice_continua(n)
+print(f"√{n} = [{espansione[0]};", "overline{" + ','.join(map(str, espansione[1])) + "}]")
+print(f"Periodo: {len(espansione[1])}")
