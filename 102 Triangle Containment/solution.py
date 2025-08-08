@@ -21,7 +21,22 @@ import time
 
 x = 0
 y = 1
+def isBetween(a, b, c):
+    crossproduct = (c[y] - a[y]) * (b[x] - a[x]) - (c[x] - a[x]) * (b[y] - a[y])
 
+    # compare versus epsilon for floating point values, or != 0 if using integers
+    if abs(crossproduct) != 0:
+        return False
+
+    dotproduct = (c[x] - a[x]) * (b[x] - a[x]) + (c[y] - a[y])*(b[y] - a[y])
+    if dotproduct < 0:
+        return False
+
+    squaredlengthba = (b[x] - a[x])*(b[x] - a[x]) + (b[y] - a[y])*(b[y] - a[y])
+    if dotproduct > squaredlengthba:
+        return False
+
+    return True
 
 
 def ConvertPoint(p):
@@ -80,7 +95,7 @@ def SegmentIntersection(m1,q1,m2,q2):
     # x = (c1 - c2)/(m2 - m1)
     x = (q1 - q2)/(m2 - m1)
     y = (m1 * x) +q1
-    return [x,y]
+    return [int(x),int(y)]
 
 def TriangleCOG(triangle, centerAB, centerBC):
     a, b, c = 0,1,2
@@ -112,7 +127,7 @@ def isPointBetweenAngle(segment1, segment2, vertex, p, triangleCenter):
     else:
         return m1 > mp and mp > m2
     
-    
+
     
 
 def Solution():    
@@ -125,12 +140,18 @@ def Solution():
     origin = [0,0]
 
     res = 0
-
+    count = 0
     for triangle in triangles:
         A = [triangle[0][x],triangle[0][y]]
         B = [triangle[1][x],triangle[1][y]]
         C = [triangle[2][x],triangle[2][y]]
-
+        # A = [-340,495]
+        # B = [-153,-910]
+        # C = [835,-947]
+        # A = [-175,41]
+        # B = [-421,-714]
+        # C = [574,-645]
+        
         AB = [A,B]
         BC = [B,C]
         CA = [C,A]
@@ -155,16 +176,35 @@ def Solution():
         mAB = SlopeFromSegment(AB)
         mBC = SlopeFromSegment(BC)
         mCA = SlopeFromSegment(CA)
+        mCOG = SlopeFromSegment([CenterOfGravity, origin])
 
         qAB = FindQ(A,mAB)
+        qBC = FindQ(B,mBC)
+        qCA = FindQ(C, mCA)
+        qCOG = FindQ(CenterOfGravity, mCOG)
+        count = 0
 
-
+        abIntersection = SegmentIntersection(mAB,qAB,mCOG,qCOG) 
+        bcIntesection = SegmentIntersection(mBC,qBC,mCOG,qCOG) 
+        caIntesection= SegmentIntersection(mCA,qCA,mCOG,qCOG)
+       
+        
         mp = SlopeFromSegment([CenterOfGravity,origin])
 
+        originDistance = DistanceBetweenTwoPoints(CenterOfGravity, origin)
+
+        #if originDistance < DistanceBetweenTwoPoints(mAB)
 
 
+        #continue
         ### DRAWING ###
         img = imgClone.copy()
+
+        if not isBetween(CenterOfGravity, origin, abIntersection) and not isBetween(CenterOfGravity, origin, bcIntesection) and not isBetween(CenterOfGravity, origin, caIntesection):
+            count+=1
+            DrawSegment(img, [0,800], [1000,800],(0,255,0))
+        else:
+            DrawSegment(img, [0,800], [1000,800],(255,0,0))
 
         # Triangle
         DrawTriangle(triangle, img)
@@ -201,7 +241,7 @@ def Solution():
         cv2.imshow("triangle",img)
 
         cv2.waitKey(0)
+    return count 
 
 
-
-Solution()
+print(Solution())

@@ -7,9 +7,8 @@ def solve():
     n = 3
     subIndexesComb =[[[0],[0]],[[0],[0]]]
     n_len = len(str(n))
-    primeIndex = 1
     primes = {}
-    for p in SieveOfEratosthenes(9999999):
+    for p in SieveOfEratosthenes(999999):
         primes[p] = False
 
 
@@ -18,16 +17,19 @@ def solve():
         for i in range(1,l):
             newSub.append(list(itertools.combinations([int(j) for j in range(0,l+1)],i)))
         subIndexesComb.append(newSub)
-
+        
+    primeToCheck = []
     for n in primes:
         if primes[n]: continue
         n_len = len(str(n))
-        primeToCheck = []
+
         
         for i in range(n_len-1, 0, -1):
             for subIndexes in subIndexesComb[n_len][i-1]:
                 if n_len-1 in subIndexes:continue
                 numberOfPrimes = 0
+                primeToCheck = []
+
                 for sub in range(0,10):
                     sI=str(n)
                     for index in subIndexes: 
@@ -40,7 +42,8 @@ def solve():
                     return n
 
         for p in primeToCheck:
-            primes[p]=True
+            if p in primes:
+                primes[p]=True
             
 start_time = time.time()
 print(solve())

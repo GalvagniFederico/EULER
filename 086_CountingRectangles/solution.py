@@ -28,7 +28,7 @@ def Solve():
 
     for w in range(1,100):
         newCount = 1
-        for h in range(w,100):
+        for h in range(w+1,100):
             lastCount = newCount
             newCount = CountRectangles(w,h)
             
