@@ -37,7 +37,7 @@ def HandScore(hand):
     return score
 
 def Solve():
-    hands = (line.split() for line in open('054_poker\\file.txt'))
+    hands = (line.split() for line in open('file.txt'))
     
     p1 = 0
     
