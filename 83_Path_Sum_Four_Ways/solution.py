@@ -12,8 +12,6 @@ def Solve():
     sizeY = len(matrix[0])
 
     visited = [[False for i in j] for j in matrix]
-    
-    #Add starting node [0][0] to the queue
     queue = [Node(0,0, matrix[0][0])]
 
     while (len(queue) > 0):

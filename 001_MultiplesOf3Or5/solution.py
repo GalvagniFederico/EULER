@@ -8,4 +8,6 @@ def MultiplesOf3Or5(n):
             s += i
     return s
 
-print(MultiplesOf3Or5(999))
+
+if __name__ == "__main__":
+    print(MultiplesOf3Or5(999))
